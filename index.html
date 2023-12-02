@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Fira+Code");
+
+      body {
+        background-color: black;
+        color: green;
+        font-size: 21px;
+        padding: 20px;
+        font-family: "Fira Code";
+        letter-spacing: 0px;
+      }
+
+      .container .input-box {
+        display: flex;
+        gap: 10px;
+      }
+
+      .container .input-box #command-input {
+        border: none;
+        background-color: transparent;
+        color: green;
+        font-size: 21px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="prev-message"></div>
+      <form class="input-box">
+        <div>></div>
+        <input id="command-input" />
+      </form>
+    </div>
+    <script>
+      const url = "ws:/" + window.location.href.split("/").slice(1, -1).join("/") + "/ws-cmd"
+      console.log(url)
+      const socket = new WebSocket(url);
+
+      // WebSocket connection handling
+      socket.addEventListener("open", (event) => {
+        console.log("WebSocket connection opened");
+      });
+
+      // Function to send a message to the WebSocket server
+      function sendMessageToServer(message) {
+        // Check if the WebSocket connection is open before sending a message
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(message);
+          console.log(`Message sent to server: ${message}`);
+        } else {
+          console.error("WebSocket connection is not open.");
+        }
+      }
+
+      const prevMessage = document.querySelector(".prev-message");
+      socket.addEventListener("message", (event) => {
+        const message = event.data;
+        prevMessage.innerHTML += `<div class="prev-answer">${message}</div>`;
+      });
+
+      socket.addEventListener("close", (event) => {
+        console.log("WebSocket connection closed");
+      });
+
+      const inputBox = document.querySelector(".input-box");
+      const commandInput = document.querySelector("#command-input");
+      inputBox.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (commandInput.value === "clear") {
+          prevMessage.innerHTML = "";
+        }
+        prevMessage.innerHTML += `<div class="prev-command">>   ${commandInput.value}</div>`;
+        sendMessageToServer(commandInput.value);
+        inputBox.reset();
+      });
+    </script>
+  </body>
+</html>
