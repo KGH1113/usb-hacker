@@ -72,7 +72,7 @@
       const commandInput = document.querySelector("#command-input");
       inputBox.addEventListener("submit", (event) => {
         event.preventDefault();
-        if (commandInput.value === "clear") {
+        if (commandInput.value === "clear" || commandInput.value === "cls") {
           prevMessage.innerHTML = "";
         }
         prevMessage.innerHTML += `<div class="prev-command">>   ${commandInput.value}</div>`;
