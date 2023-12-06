@@ -48,6 +48,7 @@ function resetUploadedFile() {
     });
   });
 }
+resetUploadedFile();
 
 // Handle file upload
 app.post("/upload", upload.single("file"), (req, res) => {
@@ -62,12 +63,15 @@ app.get("/u", (req, res) => {
   res.sendFile(__dirname + "/upload.html");
 });
 
+app.get("/reset-uploaded-file", (req, res) => {
+  resetUploadedFile();
+  res.send("success");
+});
+
 app.get("/download-uploaded-file", (req, res) => {
   fs.readdir(__dirname + "/uploads", (err, files) => {
-    files.forEach(async (file) => {
-      res.sendFile(__dirname + "/uploads/" + file);
-      resetUploadedFile();
-    });
+    console.log(__dirname + "/uploads/" + files[0]);
+    res.sendFile(__dirname + "/uploads/" + files[0]);
   });
 });
 
